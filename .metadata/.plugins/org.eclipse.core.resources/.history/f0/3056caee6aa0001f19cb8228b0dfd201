@@ -1,0 +1,136 @@
+package airport;
+
+import java.awt.EventQueue;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.Month;
+
+public class ticket extends JFrame {
+
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+    private JTextField nameField;
+    private JComboBox<String> cityComboBox;
+    private JComboBox<String> countryComboBox;
+    private JRadioButton businessClassRadioButton;
+    private JRadioButton economyClassRadioButton;
+    private JSpinner dateSpinner;
+
+    // Основные данные для расчета
+    private double basePrice = 100.0;
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+            	ticket frame = new ticket();
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public ticket() {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 600, 450);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(null);
+
+        // Поле для ввода имени
+        JLabel nameLabel = new JLabel("Имя:");
+        nameLabel.setBounds(10, 20, 80, 20);
+        contentPane.add(nameLabel);
+
+        nameField = new JTextField();
+        nameField.setToolTipText("Введите ваше имя");
+        nameField.setBounds(100, 20, 150, 20);
+        contentPane.add(nameField);
+        nameField.setColumns(10);
+
+        // Выбор города
+        JLabel cityLabel = new JLabel("Город:");
+        cityLabel.setBounds(10, 60, 80, 20);
+        contentPane.add(cityLabel);
+
+        cityComboBox = new JComboBox<>(new String[]{"Минск", "Токио", "Астана"});
+        cityComboBox.setBounds(100, 60, 150, 20);
+        contentPane.add(cityComboBox);
+
+        // Выбор страны
+        JLabel countryLabel = new JLabel("Страна:");
+        countryLabel.setBounds(10, 100, 80, 20);
+        contentPane.add(countryLabel);
+
+        countryComboBox = new JComboBox<>(new String[]{"Беларусь", "Япония", "Казахстан"});
+        countryComboBox.setBounds(100, 100, 150, 20);
+        contentPane.add(countryComboBox);
+
+        // Выбор класса
+        JLabel classLabel = new JLabel("Класс:");
+        classLabel.setBounds(10, 140, 80, 20);
+        contentPane.add(classLabel);
+
+        businessClassRadioButton = new JRadioButton("Бизнес");
+        businessClassRadioButton.setBounds(100, 140, 100, 20);
+        contentPane.add(businessClassRadioButton);
+
+        economyClassRadioButton = new JRadioButton("Эконом");
+        economyClassRadioButton.setBounds(200, 140, 100, 20);
+        contentPane.add(economyClassRadioButton);
+
+        ButtonGroup classGroup = new ButtonGroup();
+        classGroup.add(businessClassRadioButton);
+        classGroup.add(economyClassRadioButton);
+
+        // Выбор даты
+        JLabel dateLabel = new JLabel("Дата полета:");
+        dateLabel.setBounds(10, 180, 80, 20);
+        contentPane.add(dateLabel);
+
+        dateSpinner = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(dateSpinner, "dd/MM/yyyy");
+        dateSpinner.setEditor(dateEditor);
+        dateSpinner.setBounds(100, 180, 150, 20);
+        contentPane.add(dateSpinner);
+
+        // Кнопка для расчета стоимости
+        JButton calculateButton = new JButton("Рассчитать");
+        calculateButton.setBounds(100, 220, 150, 30);
+        contentPane.add(calculateButton);
+
+        // Обработчик нажатия на кнопку
+        calculateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calculateTicketPrice();
+            }
+        });
+    }
+
+    // Метод расчета стоимости билета
+    private void calculateTicketPrice() {
+        String name = nameField.getText();
+        boolean isBusinessClass = businessClassRadioButton.isSelected();
+        LocalDate date = ((java.util.Date) dateSpinner.getValue()).toInstant()
+                .atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+
+        double price = basePrice;
+
+        // Проверка на класс полета
+        if (isBusinessClass) {
+            price *= 2; // Бизнес-класс дороже в 2 раза
+        }
+
+        // Проверка на сезон (лето)
+        if (date.getMonth() == Month.JUNE || date.getMonth() == Month.JULY || date.getMonth() == Month.AUGUST) {
+            price *= 1.1; // Летом дороже на 10%
+        }
+
+        // Вывод результата
+        JOptionPane.showMessageDialog(this, "Здравствуйте, " + name + "! Стоимость вашего билета: " + price + " $");
+    }
+}
