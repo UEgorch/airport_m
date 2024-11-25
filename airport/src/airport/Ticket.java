@@ -11,13 +11,13 @@ import java.time.Month;
 public class Ticket extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private JPanel contentPane;
-    private JTextField nameField;
-    private JComboBox<String> cityComboBox;
-    private JComboBox<String> countryComboBox;
-    private JRadioButton businessClassRadioButton;
-    private JRadioButton economyClassRadioButton;
-    private JSpinner dateSpinner;
+    JPanel contentPane;
+    JTextField nameField;
+    JComboBox<String> cityComboBox;
+    JComboBox<String> countryComboBox;
+    JRadioButton businessClassRadioButton;
+    JRadioButton economyClassRadioButton;
+    JSpinner dateSpinner;
 
     private String[] countries = {"Беларусь", "Япония", "Казахстан"};
     private String[][] cities = {
@@ -48,7 +48,7 @@ public class Ticket extends JFrame {
     }
 
     public Ticket() {
-    	setTitle("Аэропорт");
+        setTitle("Аэропорт");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 600, 450);
         contentPane = new JPanel();
@@ -99,6 +99,7 @@ public class Ticket extends JFrame {
         contentPane.add(businessClassRadioButton);
 
         economyClassRadioButton = new JRadioButton("Эконом");
+        economyClassRadioButton.setSelected(true);
         economyClassRadioButton.setBounds(200, 140, 100, 20);
         contentPane.add(economyClassRadioButton);
 
@@ -127,16 +128,23 @@ public class Ticket extends JFrame {
         });
     }
 
-    private void update() {
+    public void update() {
         int countryIndex = countryComboBox.getSelectedIndex();
         cityComboBox.setModel(new DefaultComboBoxModel<>(cities[countryIndex]));
     }
+    
+    private double calculatedPrice;
 
-    private void calculate() {
+    public double getCalculatedPrice() {
+        return calculatedPrice;
+    }
+
+    public void calculate() {
         String name = nameField.getText();
         if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Введите ваше имя", "Ошибка", JOptionPane.WARNING_MESSAGE);
-            return;
+        
+//            JOptionPane.showMessageDialog(this, "Введите ваше имя", "Ошибка", JOptionPane.WARNING_MESSAGE);
+//            return;
         }
 
         int countryIndex = countryComboBox.getSelectedIndex();
@@ -153,10 +161,10 @@ public class Ticket extends JFrame {
         }
 
         if (date.getMonth() == Month.JUNE || date.getMonth() == Month.JULY || date.getMonth() == Month.AUGUST) {
-        	double priceFull = price *= 1.1;
-        	price = Math.round(priceFull);
+            price *= 1.1;
         }
 
-        JOptionPane.showMessageDialog(this, "Здравствуйте, " + name + "! Стоимость вашего билета: " + price + " $");
+        calculatedPrice = Math.round(price);
+        JOptionPane.showMessageDialog(this, "Здравствуйте, " + name + "! Стоимость вашего билета: " + calculatedPrice + " $");
     }
 }
